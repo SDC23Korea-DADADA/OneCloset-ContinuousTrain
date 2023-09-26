@@ -54,11 +54,13 @@ def save_user_data(request):
 
     # clothes csv 읽어오기
     clothes_df = pd.read_csv(os.path.join(label_directory, "additional_clothesId.csv"), encoding='cp949')
+    clothes_id_set = set(clothes_df['clothesId'])
 
     for cloth in request.clothesUrl:
         # 기존 저장되어 있는 clothesId 인지 확인
-        if clothes_df['clothesId'].isin([cloth.clothesId]).any():
-            raise Exception("이미 추가학습된 옷입니다.")
+        if cloth.clothesId in clothes_id_set:
+            return False
+
         # clothes id 추가
         new_clothes_id = {"clothesId": cloth.clothesId}
         clothes_df.loc[len(clothes_df)] = new_clothes_id

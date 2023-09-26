@@ -59,6 +59,10 @@ def save_user_data(request):
         # 기존 저장되어 있는 clothesId 인지 확인
         if clothes_df['clothesId'].isin([cloth.clothesId]).any():
             continue
+        # clothes id 추가
+        new_clothes_id = {"clothesId": cloth.clothesId}
+        clothes_df.loc[len(clothes_df)] = new_clothes_id
+
 
         # 추가학습할 이미지 파일 이름 생성
         fname = str(uuid.uuid4())[:13].replace("-", "") + ".png"

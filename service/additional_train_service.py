@@ -13,35 +13,32 @@ label_directory = os.path.join(os.path.abspath(os.sep), "home", "j-j9s006", "dat
 
 # 실행 파일 경로
 execute_directory = os.path.join(os.path.abspath(os.sep), "home", "j-j9s006", "addtional_train")
-execute_file = "additional_train.ipynb"
+material_file = "additional_material_train.ipynb"
+type_file = "additional_type_train.ipynb"
 
 # 로그 설정
 logger = logging.getLogger(__name__)
 
 # 라벨 변환 정보
 material_int_to_labels = {
-    0: "코듀로이",
-    1: "면",
-    2: "니트",
-    3: "데님",
-    4: "시폰",
-    5: "패딩",
-    6: "트위드",
-    7: "플리스",
-    8: "가죽",
+    0: "코듀로이", 1: "면", 2: "니트", 3: "데님",
+    4: "시폰", 5: "패딩", 6: "트위드", 7: "플리스", 8: "가죽",
 }
 
 material_labels_to_int = {
-    "코듀로이": 0,
-    "면": 1,
-    "니트": 2,
-    "데님": 3,
-    "시폰": 4,
-    "패딩": 5,
-    "트위드": 6,
-    "플리스": 7,
-    "가죽": 8,
+    "코듀로이": 0, "면": 1, "니트": 2, "데님": 3,
+    "시폰": 4, "패딩": 5, "트위드": 6, "플리스": 7, "가죽": 8,
 }
+
+# 종류 라벨 변환 정보
+type_labels_to_int = {'긴팔티': 0, '반팔티': 1, '셔츠/블라우스': 2, '니트웨어': 3, '후드티': 4, '민소매': 5,
+                      '긴바지': 6, '반바지': 7, '롱스커트': 8, '미니스커트': 9,
+                      '코트': 10, '재킷': 11, '점퍼/짚업': 12, '패딩': 13, '가디건': 14, '베스트': 15,
+                      '원피스': 16, '점프수트': 17}
+type_int_to_labels = {0: '긴팔티', 1: '반팔티', 2: '셔츠/블라우스', 3: '니트웨어', 4: '후드티', 5: '민소매',
+                      6: '긴바지', 7: '반바지', 8: '롱스커트', 9: '미니스커트',
+                      10: '코트', 11: '재킷', 12: '점퍼/짚업', 13: '패딩', 14: '가디건', 15: '베스트',
+                      16: '원피스', 17: '점프수트'}
 
 
 def save_user_data(request):
@@ -52,7 +49,8 @@ def save_user_data(request):
     additional_train_init()
 
     # label csv 파일 읽어오기
-    df = pd.read_csv(os.path.join(label_directory, "additional_material_label.csv"), encoding='cp949')
+    material_df = pd.read_csv(os.path.join(label_directory, "additional_material_label.csv"), encoding='cp949')
+    type_df = pd.read_csv(os.path.join(label_directory, "additional_type_label.csv"), encoding='cp949')
 
     for cloth in request.clothesUrl:
         # 추가학습할 이미지 파일 이름 생성
@@ -61,21 +59,42 @@ def save_user_data(request):
         # 이미지 저장
         save_image(os.path.join(base_directory, fname), cloth.url)
 
-        # label 데이터 추가
-        new_row = {"file": fname, "type_id": material_labels_to_int.get(cloth.material),
-                   "Filepath": os.path.join(base_directory, fname)}
-        df.loc[len(df)] = new_row
+        # 학습데이터 validation 수행
+        image_validation(os.path.join(base_directory, fname), cloth.material, cloth.type)
 
-    df.to_csv(os.path.join(label_directory, "additional_material_label.csv"), index=False, encoding='cp949')
+        # material label 데이터 추가
+        material_new_row = {"file": fname, "type_id": material_labels_to_int.get(cloth.material),
+                            "Filepath": os.path.join(base_directory, fname)}
+        material_df.loc[len(material_df)] = material_new_row
+
+        # type label 데이터 추가
+        type_new_row = {"file_name": fname, "type": type_labels_to_int.get(cloth.type),
+                        "file_path": os.path.join(base_directory, fname)}
+        type_df.loc[len(type_df)] = type_new_row
+
+    material_df.to_csv(os.path.join(label_directory, "additional_material_label.csv"), index=False, encoding='cp949')
+    type_df.to_csv(os.path.join(label_directory, "additional_type_label.csv"), index=False, encoding='cp949')
 
 
 def additional_train():
     subprocess.run(["jupyter", "nbconvert",
                     "--to", "notebook",
-                    "--execute", os.path.join(execute_directory, execute_file),
+                    "--execute", os.path.join(execute_directory, material_file),
                     "--output",
-                    f"additional_train_{get_current_time()}.ipynb",
+                    f"additional_material_train_{get_current_time()}.ipynb",
                     "--debug"])
+    subprocess.run(["jupyter", "nbconvert",
+                    "--to", "notebook",
+                    "--execute", os.path.join(execute_directory, type_file),
+                    "--output",
+                    f"additional_type_train_{get_current_time()}.ipynb",
+                    "--debug"])
+
+
+def image_validation(image_path, material, type):
+    # TODO: 사용자가 입력한 이미지에 대한 검증 작업 로직
+    #  검증결과 학습 데이터로 사용이 가능하다면 True, 불가능하다면 False 반환
+    return True
 
 
 def save_image(save_path, url):
@@ -116,7 +135,12 @@ def additional_train_init():
     create_directory(label_directory)
     create_directory(execute_directory)
 
-    # label csv 파일이 없을경우 빈 파일 생성
+    # material label csv 파일이 없을경우 빈 파일 생성
     if not os.path.exists(os.path.join(label_directory, "additional_material_label.csv")):
         df = pd.DataFrame(columns=["file", "type_id", "Filepath"])
         df.to_csv(os.path.join(label_directory, "additional_material_label.csv"), index=False, encoding='cp949')
+
+    # type label csv 파일이 없을경우 빈 파일 생성
+    if not os.path.exists(os.path.join(label_directory, "additional_type_label.csv")):
+        df = pd.DataFrame(columns=["file_name", "type", "file_path"])
+        df.to_csv(os.path.join(label_directory, "additional_type_label.csv"), index=False, encoding='cp949')

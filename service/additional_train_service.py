@@ -52,7 +52,14 @@ def save_user_data(request):
     material_df = pd.read_csv(os.path.join(label_directory, "additional_material_label.csv"), encoding='cp949')
     type_df = pd.read_csv(os.path.join(label_directory, "additional_type_label.csv"), encoding='cp949')
 
+    # clothes csv 읽어오기
+    clothes_df = pd.read_csv(os.path.join(label_directory, "additional_clothesId.csv"), encoding='cp949')
+
     for cloth in request.clothesUrl:
+        # 기존 저장되어 있는 clothesId 인지 확인
+        if clothes_df['clothesId'].isin([cloth.clothesId]):
+            continue
+
         # 추가학습할 이미지 파일 이름 생성
         fname = str(uuid.uuid4())[:13].replace("-", "") + ".png"
 
@@ -144,3 +151,8 @@ def additional_train_init():
     if not os.path.exists(os.path.join(label_directory, "additional_type_label.csv")):
         df = pd.DataFrame(columns=["file_name", "type", "file_path"])
         df.to_csv(os.path.join(label_directory, "additional_type_label.csv"), index=False, encoding='cp949')
+
+    # clothesId csv 파일이 없을경우 빈 파일 생성
+    if not os.path.exists(os.path.join(label_directory, "additional_clothesId.csv")):
+        df = pd.DataFrame(columns=["clothesId"])
+        df.to_csv(os.path.join(label_directory, "additional_clothesId.csv"), index=False, encoding='cp949')

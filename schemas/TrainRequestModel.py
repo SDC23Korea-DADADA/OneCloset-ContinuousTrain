@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 
 class ClothesInfo(BaseModel):
+    clothesId: str
     type: str
     material: str
     url: str

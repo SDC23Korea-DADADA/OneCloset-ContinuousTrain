@@ -81,13 +81,13 @@ def additional_train():
                     "--to", "notebook",
                     "--execute", os.path.join(execute_directory, material_file),
                     "--output",
-                    f"additional_material_train_{get_current_time()}.ipynb",
+                    f"./ipynb_material_output/additional_material_train_{get_current_time()}.ipynb",
                     "--debug"])
     subprocess.run(["jupyter", "nbconvert",
                     "--to", "notebook",
                     "--execute", os.path.join(execute_directory, type_file),
                     "--output",
-                    f"additional_type_train_{get_current_time()}.ipynb",
+                    f"./ipynb_type_output/additional_type_train_{get_current_time()}.ipynb",
                     "--debug"])
 
 

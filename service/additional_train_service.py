@@ -57,7 +57,7 @@ def save_user_data(request):
 
     for cloth in request.clothesUrl:
         # 기존 저장되어 있는 clothesId 인지 확인
-        if clothes_df['clothesId'].isin([cloth.clothesId]):
+        if clothes_df['clothesId'].isin([cloth.clothesId]).any():
             continue
 
         # 추가학습할 이미지 파일 이름 생성

@@ -85,6 +85,7 @@ def save_user_data(request):
 
     material_df.to_csv(os.path.join(label_directory, "additional_material_label.csv"), index=False, encoding='cp949')
     type_df.to_csv(os.path.join(label_directory, "additional_type_label.csv"), index=False, encoding='cp949')
+    clothes_df.to_csv(os.path.join(label_directory, "additional_clothesId.csv"), index=False, encoding='cp949')
 
 
 def additional_train():

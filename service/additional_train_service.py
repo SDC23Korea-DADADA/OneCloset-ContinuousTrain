@@ -58,7 +58,7 @@ def save_user_data(request):
     for cloth in request.clothesUrl:
         # 기존 저장되어 있는 clothesId 인지 확인
         if clothes_df['clothesId'].isin([cloth.clothesId]).any():
-            continue
+            raise Exception("이미 추가학습된 옷입니다.")
         # clothes id 추가
         new_clothes_id = {"clothesId": cloth.clothesId}
         clothes_df.loc[len(clothes_df)] = new_clothes_id

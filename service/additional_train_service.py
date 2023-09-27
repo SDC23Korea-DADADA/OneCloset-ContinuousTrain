@@ -95,18 +95,18 @@ def save_user_data(request):
 
 def additional_train():
     logger.info("[Train] Start additional train")
-    # subprocess.run(["jupyter", "nbconvert",
-    #                 "--to", "notebook",
-    #                 "--execute", os.path.join(execute_directory, material_file),
-    #                 "--output",
-    #                 f"./ipynb_material_output/additional_material_train_{get_current_time()}.ipynb",
-    #                 "--debug"])
-    # subprocess.run(["jupyter", "nbconvert",
-    #                 "--to", "notebook",
-    #                 "--execute", os.path.join(execute_directory, type_file),
-    #                 "--output",
-    #                 f"./ipynb_type_output/additional_type_train_{get_current_time()}.ipynb",
-    #                 "--debug"])
+    subprocess.run(["jupyter", "nbconvert",
+                    "--to", "notebook",
+                    "--execute", os.path.join(execute_directory, material_file),
+                    "--output",
+                    f"./ipynb_material_output/additional_material_train_{get_current_time()}.ipynb",
+                    "--debug"])
+    subprocess.run(["jupyter", "nbconvert",
+                    "--to", "notebook",
+                    "--execute", os.path.join(execute_directory, type_file),
+                    "--output",
+                    f"./ipynb_type_output/additional_type_train_{get_current_time()}.ipynb",
+                    "--debug"])
     logger.info("[Train] End additional train")
 
 

@@ -55,10 +55,12 @@ def save_user_data(request):
     # clothes csv 읽어오기
     clothes_df = pd.read_csv(os.path.join(label_directory, "additional_clothesId.csv"), encoding='cp949')
     clothes_id_set = set(clothes_df['clothesId'])
+    logger.info(f"[clothesId] {clothes_id_set}")
 
     for cloth in request.clothesUrl:
         # 기존 저장되어 있는 clothesId 인지 확인
         if cloth.clothesId in clothes_id_set:
+            logger.info(f"[clothesId] {cloth.clothesId} is already saved")
             return False
 
         # clothes id 추가
@@ -91,18 +93,20 @@ def save_user_data(request):
 
 
 def additional_train():
-    subprocess.run(["jupyter", "nbconvert",
-                    "--to", "notebook",
-                    "--execute", os.path.join(execute_directory, material_file),
-                    "--output",
-                    f"./ipynb_material_output/additional_material_train_{get_current_time()}.ipynb",
-                    "--debug"])
-    subprocess.run(["jupyter", "nbconvert",
-                    "--to", "notebook",
-                    "--execute", os.path.join(execute_directory, type_file),
-                    "--output",
-                    f"./ipynb_type_output/additional_type_train_{get_current_time()}.ipynb",
-                    "--debug"])
+    logger.info("[Train] Start additional train")
+    # subprocess.run(["jupyter", "nbconvert",
+    #                 "--to", "notebook",
+    #                 "--execute", os.path.join(execute_directory, material_file),
+    #                 "--output",
+    #                 f"./ipynb_material_output/additional_material_train_{get_current_time()}.ipynb",
+    #                 "--debug"])
+    # subprocess.run(["jupyter", "nbconvert",
+    #                 "--to", "notebook",
+    #                 "--execute", os.path.join(execute_directory, type_file),
+    #                 "--output",
+    #                 f"./ipynb_type_output/additional_type_train_{get_current_time()}.ipynb",
+    #                 "--debug"])
+    logger.info("[Train] End additional train")
 
 
 def image_validation(image_path, material, type):

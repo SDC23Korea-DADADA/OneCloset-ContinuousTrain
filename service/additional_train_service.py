@@ -55,6 +55,7 @@ def save_user_data(request):
     # clothes csv 읽어오기
     clothes_df = pd.read_csv(os.path.join(label_directory, "additional_clothesId.csv"), encoding='cp949')
     clothes_id_set = set(clothes_df['clothesId'])
+    clothes_id_set = {str(element) for element in clothes_id_set}
     logger.info(f"[clothesId] {clothes_id_set}")
 
     for cloth in request.clothesUrl:

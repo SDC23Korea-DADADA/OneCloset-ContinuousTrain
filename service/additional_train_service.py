@@ -65,7 +65,7 @@ def save_user_data(request):
             return False
 
         # clothes id 추가
-        new_clothes_id = {"clothesId": cloth.clothesId}
+        new_clothes_id = {"clothesId": cloth.clothesId, "time": get_current_time()}
         clothes_df.loc[len(clothes_df)] = new_clothes_id
 
 
